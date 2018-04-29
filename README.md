@@ -9,21 +9,21 @@ From the respective [Wikipedia article](http://en.wikipedia.org/wiki/NASA-TLX):
 
 Learn more about it at the official [NASA-TLX website](http://humansystems.arc.nasa.gov/groups/TLX/). You can also take a look at the original paper [<cite>Development of NASA-TLX (Task Load Index): Results of Empirical and Theoretical Research</cite>](http://humansystems.arc.nasa.gov/groups/TLX/downloads/NASA-TLXChapter.pdf) (PDF format, 1.4 MB).
 
-## Tilman's additions
+## Modifications in this fork
 - Added subjective assessment questions in the form of Likert-style scales.
-- Added experiment groups for counterbalancing
-- Weighted TRX scores are now optional
-- Added multiple rounds for several between-subjects conditions
+- Added experiment groups for counterbalancing.
+- Weighted TRX scores are now optional.
+- Added multiple rounds for several between-subjects conditions.
+- Demographic information is collected in Step 0.
+- Created data structure for server communication
+- Weights are stored accordingly
+- Provided parameter definitions when weighing NASA TLX
+- Revised instructions to hand over to experimenter before continuing the next NASA round
+- TLX scales are reset before each round
+- Added ERROR warnings to user input texts (can be deactivated by setting variable enforce_user_input to false)
 
 ## Installation
 No installation required. Just [download](https://github.com/isellsoap/nasa-tlx/archive/master.zip) the ZIP file, unzip it and open `index.html` with a browser of your choice.
-
-## Tested browsers
-At this point I tested the implementation with the latest versions of
-- Chrome
-- Firefox
-- Opera
-- Safari
 
 ## Author
 - [Francesco Schwarz](https://github.com/isellsoap/)

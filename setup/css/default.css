@@ -437,7 +437,7 @@ html {
 
 body {
 	margin: -5em auto 2em;
-	max-width: 40em;
+	max-width: 45em;
 	padding: 0 1em;
 	text-align: center;
 }
@@ -483,38 +483,46 @@ section {
 
 /* Step 1 */
 
-.step_1 > div {
+.step_1 > div,
+.step_0 > div {
 	text-align: left;
 }
 
-.step_1 div section {
+.step_1 div section,
+.step_0 div section {
 	margin-bottom: 0;
 	width: 44%;
 }
 
-.step_1 .first {
+.step_1 .first,
+.step_0 .first {
 	float: left;
 }
 
-.step_1 .second {
+.step_1 .second,
+.step_0 .second {
 	float: right;
 }
 
-.step_1 form {
+.step_1 form,
+.step_0 form {
 	position: relative;
 }
 
-.step_1 input[type="text"] {
+.step_1 input[type="text"],
+.step_0 input[type="text"] {
 	width: 66%;
 }
 
-.step_1 .error {
+.step_1 .error,
+.step_0 .error {
 	clear: both;
 	color: red;
 	font-size: .875em;
 }
 
-.step_1 .cf > .error {
+.step_1 .cf > .error,
+.step_0 .cf > .error {
 	margin-bottom: -2em;
 	text-align: center;
 }
@@ -621,4 +629,8 @@ section {
 	color: #856404;
     background-color: #fff3cd;
     border-color: #ffeeba;
+}
+
+.left {
+	text-align: left;
 }

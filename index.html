@@ -13,8 +13,41 @@
 				<h1>Subjective Assessment</h1>
 			</header>
 			<section class="step_0">
-				<h2>Welcome to the condition questionnaires!</h2>
-				<!-- <div id="container"></div> -->
+				<h2>Demographics</h2>
+				<div class="alert alert-warning" role="alert"></div>
+				<div class="cf">
+					<section class="first">
+						<h3>Age</h3>
+						<input type="text" id="age" required>
+					</section>
+					<section class="second">
+						<h3>Gender</h3>
+						<form class="list">
+							<div>
+								<div>
+									<input type="radio" name="gender" id="gender_f" value="female">
+									<label for="gender_f">Female</label>
+								</div>
+								<div>
+									<input type="radio" name="gender" id="gender_m" value="male">
+									<label for="gender_m">Male</label>
+								</div>
+								<div>
+									<input type="radio" name="gender" id="gender_o" value="other">
+									<label for="gender_o">Other</label>
+								</div>
+								<div>
+									<input type="radio" name="gender" id="gender_x" value="none">
+									<label for="gender_x">I'd rather not say</label>
+								</div>
+							</div>
+						</form>
+					</section>
+					<section class="third">
+						<h3>Profession / Background</h3>
+						<input type="text" id="profession" required>
+					</section>
+				</div>
 				<button>Get started</button>
 			</section>
 			<section class="step_1">
@@ -22,25 +55,25 @@
 				<div class="alert alert-warning" role="alert"></div>
 				<div class="cf">
 					<section class="first">
-						<h3>Participant</h3>
+						<h3>Participant ID</h3>
 						<!-- <h4><label for="create_proband">Create new participant</label></h4> -->
 						<form>
 							<input type="text" id="participant_id" required>
 							<!-- <input type="submit" value="Create"> -->
 						</form>
-						<h4>Starting task</h4>
+						<!-- <h4>Starting task</h4>
 						<form class="list">
 							<div>
 								<div>
-									<input type="radio" name="starting_task" id="starting_task_1" value="1"> <!-- stroop -->
+									<input type="radio" name="starting_task" id="starting_task_1" value="1"> 
 									<label for="starting_task_1">Task I</label>
 								</div>
 								<div>
-									<input type="radio" name="starting_task" id="starting_task_2" value="2"> <!-- stress -->
+									<input type="radio" name="starting_task" id="starting_task_2" value="2"> 
 									<label for="starting_task_2">Task II</label>
 								</div>
 							</div>
-						</form>
+						</form> -->
 					</section>
 					<section class="second">
 						<h3>Experiment Group</h3>
@@ -53,14 +86,14 @@
 						<form class="list">
 							<div>
 								<div>
-									<input type="radio" name="experiment_group" id="group_1" value="1">
+									<input type="radio" name="experiment_group" id="group_1" value="1">	<!-- starts with STROOP Test -->
 									<label for="group_1">Group 1</label>
 								</div>
 								<div>
-									<input type="radio" name="experiment_group" id="group_2" value="2">
+									<input type="radio" name="experiment_group" id="group_2" value="2"> <!-- starts with STRESS Test -->
 									<label for="group_2">Group 2</label>
 								</div>
-								<div>
+								<!-- <div>
 									<input type="radio" name="experiment_group" id="group_3" value="3">
 									<label for="group_3">Group 3</label>
 								</div>
@@ -75,7 +108,7 @@
 								<div>
 									<input type="radio" name="experiment_group" id="group_6" value="6">
 									<label for="group_6">Group 6</label>
-								</div>
+								</div> -->
 							</div>
 						</form>
 					</section>
@@ -119,44 +152,56 @@
 			</section>
 			<section class="step_3">
 				<h2>Pair-wise comparison of factors</h2>
-				<p class="alt">Select the member of each pair that provided the most significant source of workload:</p>
+				<p class="alt">In the following, please select the member of each pair that provided the most significant source of workload. As a reminder, here are the factor definitions again:
+					<ul class="left">
+						<li><strong>Mental demand:</strong> How mentally demanding was the task?</li>
+						<li><strong>Physical demand:</strong> How physically demanding was the task?</li>
+						<li><strong>Temporal demand:</strong> How hurried or rushed was the pace of the task?</li>
+						<li><strong>Performance:</strong> How successful were you in accomplishing what you were asked to do?</li>
+						<li><strong>Effort:</strong> How hard did you have to work to accomplish your level of performance?</li>
+						<li><strong>Frustration:</strong> How insecure, discouraged, irritated, stressed, and annoyed were you?</li>
+					</ul>
+				</p>
+				<hr />
 			</section>
 			<section class="step_4"> 
 				<h2>Likert-style ratings</h2>
 				<section>
-					<h3>Question 1</h3>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<h3>Perceived Stress</h3>
+					<p>I felt very stressed during the task.</p>
 					<div class="likert"></div>
 				</section>
 				<section>
-					<h3>Question 2</h3>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<h3>Perceived Anxiety</h3>
+					<p>I felt very anxious during the task.</p>
 					<div class="likert"></div>
 				</section>
 				<section>
-					<h3>Question 3</h3>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<h3>Focus</h3>
+					<p>The thermal intervention helped me concentrate on the task.</p>
 					<div class="likert"></div>
 				</section>
 				<section>
-					<h3>Question 4</h3>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<h3>Distraction</h3>
+					<p>The thermal intervention distracted me from the task.</p>
 					<div class="likert"></div>
 				</section>
-				<section>
+				<!-- <section>
 					<h3>Question 5</h3>
 					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
 					<div class="likert"></div>
-				</section>
+				</section> -->
 				<button>Next</button>
 			</section>
 			<section class="step_5">
-				<h2>Please attend to the next task block before continuing.</h2>
+				<h2>Questionnaire completed!</h2>
 				<div></div>
+				<p><strong>Notify the experimenter</strong> that you are ready to continue with the next task. Then, come back and fill in the next questionnaire.</p>
 				<button>Next Questionnaire</button>
 			</section>
 			<section class="step_6">
 				<h2>That's it!</h2>
+				<div class="alert alert-warning" role="alert"></div>
 				<h4>Thanks for your participation!</h4>
 			</section>
 		</article>
