@@ -50,6 +50,12 @@ $(document).ready(function() {
 		return array;
 	}
 
+	function update_info() {
+		console.log("updating info");
+		$(".info").remove();
+		$("<ul class='info'><li><strong>Participant:</strong> " + settings['participant_id'] + "</li><li><strong>Starting Task:</strong> " + settings['starting_task'] + "</li><li><strong>Group:</strong> " + settings['experiment_group'] + "</li><li><strong>Round:</strong> " + current_round + "</li></ul>").insertAfter("h2");
+	}
+
 	/* variables */
 
 	var settings,
@@ -67,13 +73,32 @@ $(document).ready(function() {
 			["fr", "Frustration"]
 		],
 		tableoutput = "",
-		no_score = "–";
+		no_score = "–",
+		weighted_tlx = false,
+		total_rounds = 2,
+		current_round = 1,
+		DEBUG = true;
+
+	// set default slider setting
+	$(".tlx").slider({
+		max: 100,
+		min: 0,
+		step: 5,
+		value: 0
+	});
+
+	// set default slider setting
+	$(".likert").slider({
+		max: 7,
+		min: 1,
+		step: 1
+	});
 
 	/* hide future steps */
 
-	$(".step_1, .step_2, .step_3, .step_4").hide();
+	$(".step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .alert").hide();
 
-	$("<p>No data available yet.</p>").insertAfter(".step_0 h2");
+	// $("<p>No data available yet.</p>").insertAfter(".step_0 h2");
 
 	/* step 0 */
 
@@ -82,7 +107,7 @@ $(document).ready(function() {
 		$(".step_1").show();
 	});
 
-	/* step 1 */
+	/* step 1: Experiment SETTINGS */
 
 	$(".step_1 input[type='submit']").live("click", function() {
 
@@ -107,18 +132,18 @@ $(document).ready(function() {
 		});
 
 		// if input has an actual character in it
-		if ( value ) {
-			if ( proband_exists ) {
-				error_message += "Error. This " + subject + " already exists.";
-			} else {
-				$("<div><input type='radio' name='" + subject + "s' id='" + formatted_value + "'> <label for='" + formatted_value + "'>" + value + "</label></div>")
-					.appendTo($(this).parent().parent().find(".list >:first-child"));
-				// reset value of input after proband or task was created
-				$(this).siblings("input[type='text']").val("");
-			}
-		} else {
-			error_message += "Error. No characters entered.";
-		}
+		// if ( value ) {
+		// 	if ( proband_exists ) {
+		// 		error_message += "Error. This " + subject + " already exists.";
+		// 	} else {
+		// 		$("<div><input type='radio' name='" + subject + "s' id='" + formatted_value + "'> <label for='" + formatted_value + "'>" + value + "</label></div>")
+		// 			.appendTo($(this).parent().parent().find(".list >:first-child"));
+		// 		// reset value of input after proband or task was created
+		// 		$(this).siblings("input[type='text']").val("");
+		// 	}
+		// } else {
+		// 	error_message += "Error. No characters entered.";
+		// }
 
 		if ( error_message ) {
 			$(this).parent().append("<p class='error'>" + error_message + "</p>");
@@ -134,57 +159,64 @@ $(document).ready(function() {
 	});
 
 	$(".step_1 button").live("click", function() {
-		settings = [];
+		$(".alert").hide();
+		settings = {};
 		// store values of checked radio buttons in settings array
-		$("input[type='radio']:checked").each(function(i) {
-			settings.push($(this).attr("id"), $(this).siblings("label").html());
-		});
+		// $("input[type='radio']:checked").each(function(i) {
+			// settings.push($(this).attr("id"), $(this).siblings("label").html());
 
-		// prepare steps for step 2
+		settings['participant_id'] = $('#participant_id').val();
+		settings['starting_task'] = $("input[name='starting_task']:checked").val();
+		settings['experiment_group'] = $("input[name='experiment_group']:checked").val();
 
-		// set default slider setting
-		$(".slider").slider({
-			max: 100,
-			min: 1,
-			step: 5,
-			value: 50
-		});
+		if (false){ //settings['participant_id'] == null || settings['starting_task'] == null || settings['experiment_group'] == null) {
+		     // do something 
+		     $(".alert").html('ERROR: some variables have not been set!');
+		     $(".alert").show();
 
-		data_object = {
-			"button_clicks": new_filled_array(demands.length, 0),
-			"slider_value": []
-		};
+		     if(DEBUG) {
+		     	console.log(settings);
+		     }
 
-		// reset input values and thrown error paragraphs caused by input submits
-		$(".step_1 input[type='text']").val("");
-		$(".step_1 .cf p").remove();
+		} else {
 
-		// check if proband already completed a task
-		var proband_exists = false,
-			task_exists = false;
+			// prepare steps for step 2
 
-		// iterate probands
-		for ( var i = 0, length = final_result.length; i < length; i++ ) {
-			// if proband exists
-			if ( final_result[i].proband === settings[0] ) {
-				proband_exists = true;
-				// iterate tasks
-				for ( var j = 0, tasks_length = final_result[i].tasks.length; j < tasks_length; j++) {
-					// if task exists
-					if (final_result[i].tasks[j].name === settings[2]) {
-						task_exists = true;
-						break;
-					}
-				}
-				break;
-			}
-		}
+			data_object = {
+				"button_clicks": new_filled_array(demands.length, 0),
+				"tlx_value": [],
+				"likert_value": {}
+			};
 
-		// if proband doesn’t exist make first push to array and continue to step 2
-		if ( !proband_exists ) {
+			// reset input values and thrown error paragraphs caused by input submits
+			$(".step_1 input[type='text']").val("");
+			$(".step_1 .cf p").remove();
+
+			// check if proband already completed a task
+			var proband_exists = false,
+				task_exists = false;
+
+			// // iterate probands
+			// for ( var i = 0, length = final_result.length; i < length; i++ ) {
+			// 	// if proband exists
+			// 	if ( final_result[i].proband === settings[0] ) {
+			// 		proband_exists = true;
+			// 		// iterate tasks
+			// 		for ( var j = 0, tasks_length = final_result[i].tasks.length; j < tasks_length; j++) {
+			// 			// if task exists
+			// 			if (final_result[i].tasks[j].name === settings[2]) {
+			// 				task_exists = true;
+			// 				break;
+			// 			}
+			// 		}
+			// 		break;
+			// 	}
+			// }
+
+			// if proband doesn’t exist make first push to array and continue to step 2
 			final_result.push(
 				{
-					proband: settings[0],
+					proband: settings['participant_id'],
 					tasks: [
 						{
 							name: settings[2],
@@ -195,39 +227,25 @@ $(document).ready(function() {
 			);
 			$(".step_1").hide();
 			$(".step_2").show();
-			$("<ul class='info'><li><strong>Proband:</strong> " + settings[1] + "</li><li><strong>Task:</strong> " + settings[3] + "</li></ul>").insertAfter("h2");
-		} else {
-			// if proband didn’t complete the task make push to tasks array and continue to step 2
-			if (!task_exists) {
-				final_result[i].tasks.push(
-					{
-						name: settings[2],
-						data: {}
-					}
-				);
-				$(".step_1").hide();
-				$(".step_2").show();
-				$("<ul class='info'><li><strong>Proband:</strong> " + settings[1] + "</li><li><strong>Task:</strong> " + settings[3] + "</li></ul>").insertAfter("h2");			} else {
-				// if proband already did complete the task trough an error
-				var error_paragraph = "Proband <strong>" + settings[1] + "</strong> already accomplished task <strong>" + settings[3] + "</strong>.";
-				if($(".step_1 .cf > .error").length) {
-					$(".step_1 .cf > .error").html(error_paragraph);
-				} else {
-					$(".step_1 .cf").append("<p class='error'>" + error_paragraph + "</p>");
-				}
-			}
+			update_info();
+
 		}
 
 	});
 
-	/* step 2 */
+	/* step 2: NASA TLX */
 
 	$(".step_2 button").live("click", function() {
+		$(".alert").hide();
 
-		// save slider values
-		$(".slider").each(function(i) {
-			data_object["slider_value"][i] = $(this).slider("option", "value");
+		// save tlx values
+		$(".tlx").each(function(i) {
+			data_object["tlx_value"][i] = $(this).slider("option", "value");
 		});
+
+		if(DEBUG) {
+			console.log(data_object);
+		}
 
 		// prepare stuff for step 3
 		counter = 0;
@@ -235,22 +253,33 @@ $(document).ready(function() {
 		pairs_length = random_pairs.length;
 
 		$(".step_2").hide();
-		$(".step_3").show();
 
-		// start button for pairs
-		if ( $(".step_3").find("div").length ) {
-			$(".step_3 div").html("<button>Start</button>");
+		if(weighted_tlx) {
+
+			$(".step_3").show();
+
+			// start button for pairs
+			if ( $(".step_3").find("div").length ) {
+				$(".step_3 div").html("<button>Start</button>");
+			} else {
+				$(".step_3").append("<div><button>Start</button></div>");
+			}
+
+			// remove/reset "to go" counter
+			$(".step_3 .to_go").remove();
+
 		} else {
-			$(".step_3").append("<div><button>Start</button></div>");
+			
+			$(".step_4").show();
+
 		}
-		// remove/reset "to go" counter
-		$(".step_3 .to_go").remove();
 
 	});
 
-	/* step 3 */
+	/* step 3: TLX Weights */
 
 	$(".step_3 button").live("click", function() {
+		$(".alert").hide();
 
 		// if a pair button is clicked (start button hasn't got class attribute)
 		if( $(this).attr("class") ) {
@@ -277,67 +306,67 @@ $(document).ready(function() {
 			}
 			$(".step_3 .to_go").html("<strong>" + pairs_length + "</strong> to go!");
 		} else {
-			var sum = 0,
-				weights = 0,
-				output = "<table><thead><tr><th>Demand</th><th>Rating</th><th>Weight</th><th>Product</th></tr></thead><tbody>";
-			for (var j = 0; j < demands.length; j++ ) {
-				output += "<tr><td>" + demands[j][1] + "</td><td>" + data_object["slider_value"][j] + "</td><td>" + data_object["button_clicks"][j] + "</td><td>" + data_object["slider_value"][j] * data_object["button_clicks"][j] + "</td></tr>";
-				sum += data_object["slider_value"][j] * data_object["button_clicks"][j];
-				weights += data_object["button_clicks"][j];
-			}
-			output += "<tr><th colspan='3'>Product sum</th><td>" + sum + "</td></tr>";
-			output += "<tr><th colspan='3'>Total weights</th><td>" + weights + "</td></tr>";
-			output += "<tr><th colspan='3'>Rounded TLX score</th><td><strong>" + Math.round(sum/weights) + "</strong></td></tr></tbody></table>";
+			// var sum = 0,
+			// 	weights = 0,
+			// 	output = "<table><thead><tr><th>Demand</th><th>Rating</th><th>Weight</th><th>Product</th></tr></thead><tbody>";
+			// for (var j = 0; j < demands.length; j++ ) {
+			// 	output += "<tr><td>" + demands[j][1] + "</td><td>" + data_object["tlx_value"][j] + "</td><td>" + data_object["button_clicks"][j] + "</td><td>" + data_object["tlx_value"][j] * data_object["button_clicks"][j] + "</td></tr>";
+			// 	sum += data_object["tlx_value"][j] * data_object["button_clicks"][j];
+			// 	weights += data_object["button_clicks"][j];
+			// }
+			// output += "<tr><th colspan='3'>Product sum</th><td>" + sum + "</td></tr>";
+			// output += "<tr><th colspan='3'>Total weights</th><td>" + weights + "</td></tr>";
+			// output += "<tr><th colspan='3'>Rounded TLX score</th><td><strong>" + Math.round(sum/weights) + "</strong></td></tr></tbody></table>";
 
-			$(".step_4 div").html(output);
+			// $(".step_4 div").html(output);
 
 			// save computed data to array
 
 			// iterate probands
-			for (var i = 0; i < final_result.length; i++) {
-				// if proband already saved
-				if (final_result[i].proband === settings[0]) {
-					// iterate tasks
-					for (var j = 0; j < final_result[i].tasks.length; j++) {
-						if (final_result[i].tasks[j].name === settings[2]) {
-							final_result[i].tasks[j].data = data_object;
-							final_result[i].tasks[j].tlx = Math.round(sum/weights);
-							final_result[i].tasks[j].output = output;
-							break;
-						}
-					}
-					break;
-				}
-			}
+			// for (var i = 0; i < final_result.length; i++) {
+			// 	// if proband already saved
+			// 	if (final_result[i].proband === settings[0]) {
+			// 		// iterate tasks
+			// 		for (var j = 0; j < final_result[i].tasks.length; j++) {
+			// 			if (final_result[i].tasks[j].name === settings[2]) {
+			// 				final_result[i].tasks[j].data = data_object;
+			// 				final_result[i].tasks[j].tlx = Math.round(sum/weights);
+			// 				final_result[i].tasks[j].output = output;
+			// 				break;
+			// 			}
+			// 		}
+			// 		break;
+			// 	}
+			// }
 
 			// table output for overview page
 
-			tableoutput = "<thead><tr><th>Probands</th>";
+			// tableoutput = "<thead><tr><th>Probands</th>";
 
-			$(".step_1 .second .list label").each(function(i) {
-				tableoutput += "<th>" + $(this).html() + "</th>";
-			});
+			// $(".step_1 .second .list label").each(function(i) {
+			// 	tableoutput += "<th>" + $(this).html() + "</th>";
+			// });
 
-			tableoutput += "</thead><tbody>";
+			// tableoutput += "</thead><tbody>";
 
-			for (var i = 0; i < final_result.length; i++) {
-				tableoutput += "<tr><th>" + $(".step_1 label[for='" + final_result[i].proband + "']").html() + "</th>";
-				$(".step_1 .second form label").each(function() {
-					var flaggy = false;
-					for(var j = 0; j < final_result[i].tasks.length; j++) {
-						if($(this).attr("for") === final_result[i].tasks[j].name) {
-							tableoutput += "<td>" + final_result[i].tasks[j].tlx + "</td>";
-							flaggy = true;
-							break;
-						}
-					}
-					if(!flaggy) {
-						tableoutput += "<td>" + no_score + "</td>";
-					}
+			// for (var i = 0; i < final_result.length; i++) {
+			// 	tableoutput += "<tr><th>" + $(".step_1 label[for='" + final_result[i].proband + "']").html() + "</th>";
+			// 	$(".step_1 .second form label").each(function() {
+			// 		var flaggy = false;
+			// 		for(var j = 0; j < final_result[i].tasks.length; j++) {
+			// 			if($(this).attr("for") === final_result[i].tasks[j].name) {
+			// 				tableoutput += "<td>" + final_result[i].tasks[j].tlx + "</td>";
+			// 				flaggy = true;
+			// 				break;
+			// 			}
+			// 		}
+			// 		if(!flaggy) {
+			// 			tableoutput += "<td>" + no_score + "</td>";
+			// 		}
 
-				});
+			// 	});
 
-			}
+			// }
 
 			$(".step_3").hide();
 			$(".step_4").show();
@@ -346,161 +375,190 @@ $(document).ready(function() {
 
 	}); // step 3 button
 
-	/* step 4 */
+	/* step 4: subjective feedback */
 
 	$(".step_4 button").live("click", function() {
-		$(".info").remove();
-		$(".step_0 p").remove();
+		$(".alert").hide();
+		// $(".info").remove();
+		// $(".step_0 p").remove();
 
-		// add table to overview page
+		// save likert values
+		$(".likert").each(function(i) {
+			data_object["likert_value"][i] = $(this).slider("option", "value");
+		});
 
-		if($(".step_0 table").length) {
-			$(".step_0 table").html(tableoutput);
-		} else {
-			$("<table class='test'>" + tableoutput + "</tbody></table>").insertAfter('.step_0 h2');
-		}
-
-		// iterate through table columns
-
-		var result = new_filled_array($(".step_1 .second div div").length, 0);
-		var supercounter = new_filled_array(result.length, 0);
-
-		for(var i = 0; i < result.length; i++) {
-			$(".test tbody tr").children("td:nth-child(" + (i + 2) + ")").each(function() {
-				if($(this).html() !== no_score) {
-					result[i] += +$(this).html();
-					supercounter[i] += 1;
-				}
-			});
-		}
-
-		var deviation,
-			average_tlx,
-			more_tableoutput = "<tfoot><tr><th>Avg. TLX (± standard deviation)</th>";
-
-		// calculate average tlx
-
-		for(var j = 0; j < result.length; j++) {
-			average_tlx = (!supercounter[j]) ? no_score : parseFloat((result[j]/supercounter[j]).toFixed(2));
-			more_tableoutput += "<td>" + average_tlx + "</td>";
-		}
-
-		more_tableoutput += "</tr></tfoot>";
-
-		$(more_tableoutput).insertAfter(".step_0 thead");
-
-		// standard deviation
-		var min_array = [],
-			max_array = [],
-			avg_array = [],
-			label_array = [],
-			arr_counter = 0;
-
-		for(var k = 0; k < result.length; k++) {
-			deviation = 0;
-			$(".test tbody tr").children("td:nth-child(" + (k + 2) + ")").each(function() {
-				if($(this).html() !== no_score) {
-					deviation += Math.pow(+$(this).html() - +$(".test tfoot td:nth-child(" + (k + 2) + ")").html(), 2) ;
-				}
-			});
-
-			if ($(".test tfoot td:nth-child(" + (k + 2) + ")").html() !== no_score && deviation) {
-				min_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html() - parseFloat(Math.sqrt(deviation).toFixed(2))).toFixed(2);
-				max_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html() + parseFloat(Math.sqrt(deviation).toFixed(2))).toFixed(2);
-				avg_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html()).toFixed(2);
-				label_array[arr_counter] = $(".test thead th:nth-child(" + (k + 2) + ")").html();
-				arr_counter++;
-			}
-			$(".test tfoot td:nth-child(" + (k + 2) + ")").append((deviation) ? " (± " + parseFloat(Math.sqrt(deviation).toFixed(2)) + ")" : "");
-		}
-
-		// show chart if there are at least two standard deviations
-
-		if( min_array.length > 1 ) {
-
-			var chart,
-				options = {
-					chart: {
-						animation: true,
-						defaultSeriesType: "line",
-						renderTo: "container"
-					},
-					credits:{
-						enabled:false
-					},
-					title: {
-						text: ""
-					},
-				tooltip: {
-					borderWidth:1,
-					headerFormat: '<b>{point.key}</b><br>',
-					pointFormat: '<div><span style="color: {series.color}">{series.name}:</span> {point.y}</div>',
-					useHTML: true,
-					crosshairs: true,
-					shared: true
-				},
-				legend: {
-					layout:'vertical',
-					align:'right',
-					verticalAlign:'middle',
-					x:0,
-					y:0,
-					borderWidth:0
-				},
-				plotOptions: {
-					series: {
-						shadow: false,
-						lineWidth:1,
-						marker: {
-							enabled: false,
-							symbol: 'circle',
-							radius: 1,
-							states: {
-								hover: {
-									enabled: true
-								}
-							}
-						}
-					}
-				},
-				xAxis: {
-					categories: label_array,
-					tickmarkPlacement: 'on',
-					labels: {
-						y: 20
-					},
-					title: {
-						text: 'Tasks',
-						margin: 10
-					}
-				},
-				yAxis: {
-					title: {
-						text: 'TLX score',
-						margin: 10
-					},
-					min: null,
-					startOnTick:false
-				},
-				series: [{
-					name: 'Max. deviation',
-					data: max_array
-				}, {
-					name: 'Average TLX',
-					data: avg_array,
-					lineWidth:2
-				}, {
-					name: 'Min. deviation',
-					data: min_array
-				}]
-			};
-
-			chart = new Highcharts.Chart(options);
-
+		if(DEBUG) {
+			console.log(data_object);
 		}
 
 		$(".step_4").hide();
-		$(".step_0").show();
+
+		current_round++;
+		if(current_round <= total_rounds) {
+			$(".step_5").show();
+		} else {
+			$(".step_6").show();
+		}
+	});
+
+	/* step 5: NEXT QUESTIONNAIRE */
+
+	$(".step_5 button").live("click", function() {
+		$(".alert").hide();
+		// $(".info").remove();
+		// $(".step_0 p").remove();
+
+		// for calculating weighted TLX scores
+		// add table to overview page
+
+		// if($(".step_0 table").length) {
+		// 	$(".step_0 table").html(tableoutput);
+		// } else {
+		// 	$("<table class='test'>" + tableoutput + "</tbody></table>").insertAfter('.step_0 h2');
+		// }
+
+		// // iterate through table columns
+
+		// var result = new_filled_array($(".step_1 .second div div").length, 0);
+		// var supercounter = new_filled_array(result.length, 0);
+
+		// for(var i = 0; i < result.length; i++) {
+		// 	$(".test tbody tr").children("td:nth-child(" + (i + 2) + ")").each(function() {
+		// 		if($(this).html() !== no_score) {
+		// 			result[i] += +$(this).html();
+		// 			supercounter[i] += 1;
+		// 		}
+		// 	});
+		// }
+
+		// var deviation,
+		// 	average_tlx,
+		// 	more_tableoutput = "<tfoot><tr><th>Avg. TLX (± standard deviation)</th>";
+
+		// // calculate average tlx
+
+		// for(var j = 0; j < result.length; j++) {
+		// 	average_tlx = (!supercounter[j]) ? no_score : parseFloat((result[j]/supercounter[j]).toFixed(2));
+		// 	more_tableoutput += "<td>" + average_tlx + "</td>";
+		// }
+
+		// more_tableoutput += "</tr></tfoot>";
+
+		// $(more_tableoutput).insertAfter(".step_0 thead");
+
+		// // standard deviation
+		// var min_array = [],
+		// 	max_array = [],
+		// 	avg_array = [],
+		// 	label_array = [],
+		// 	arr_counter = 0;
+
+		// for(var k = 0; k < result.length; k++) {
+		// 	deviation = 0;
+		// 	$(".test tbody tr").children("td:nth-child(" + (k + 2) + ")").each(function() {
+		// 		if($(this).html() !== no_score) {
+		// 			deviation += Math.pow(+$(this).html() - +$(".test tfoot td:nth-child(" + (k + 2) + ")").html(), 2) ;
+		// 		}
+		// 	});
+
+		// 	if ($(".test tfoot td:nth-child(" + (k + 2) + ")").html() !== no_score && deviation) {
+		// 		min_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html() - parseFloat(Math.sqrt(deviation).toFixed(2))).toFixed(2);
+		// 		max_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html() + parseFloat(Math.sqrt(deviation).toFixed(2))).toFixed(2);
+		// 		avg_array[arr_counter] = +parseFloat(+$(".test tfoot td:nth-child(" + (k + 2) + ")").html()).toFixed(2);
+		// 		label_array[arr_counter] = $(".test thead th:nth-child(" + (k + 2) + ")").html();
+		// 		arr_counter++;
+		// 	}
+		// 	$(".test tfoot td:nth-child(" + (k + 2) + ")").append((deviation) ? " (± " + parseFloat(Math.sqrt(deviation).toFixed(2)) + ")" : "");
+		// }
+
+		// // show chart if there are at least two standard deviations
+
+		// if( min_array.length > 1 ) {
+
+		// 	var chart,
+		// 		options = {
+		// 			chart: {
+		// 				animation: true,
+		// 				defaultSeriesType: "line",
+		// 				renderTo: "container"
+		// 			},
+		// 			credits:{
+		// 				enabled:false
+		// 			},
+		// 			title: {
+		// 				text: ""
+		// 			},
+		// 		tooltip: {
+		// 			borderWidth:1,
+		// 			headerFormat: '<b>{point.key}</b><br>',
+		// 			pointFormat: '<div><span style="color: {series.color}">{series.name}:</span> {point.y}</div>',
+		// 			useHTML: true,
+		// 			crosshairs: true,
+		// 			shared: true
+		// 		},
+		// 		legend: {
+		// 			layout:'vertical',
+		// 			align:'right',
+		// 			verticalAlign:'middle',
+		// 			x:0,
+		// 			y:0,
+		// 			borderWidth:0
+		// 		},
+		// 		plotOptions: {
+		// 			series: {
+		// 				shadow: false,
+		// 				lineWidth:1,
+		// 				marker: {
+		// 					enabled: false,
+		// 					symbol: 'circle',
+		// 					radius: 1,
+		// 					states: {
+		// 						hover: {
+		// 							enabled: true
+		// 						}
+		// 					}
+		// 				}
+		// 			}
+		// 		},
+		// 		xAxis: {
+		// 			categories: label_array,
+		// 			tickmarkPlacement: 'on',
+		// 			labels: {
+		// 				y: 20
+		// 			},
+		// 			title: {
+		// 				text: 'Tasks',
+		// 				margin: 10
+		// 			}
+		// 		},
+		// 		yAxis: {
+		// 			title: {
+		// 				text: 'TLX score',
+		// 				margin: 10
+		// 			},
+		// 			min: null,
+		// 			startOnTick:false
+		// 		},
+		// 		series: [{
+		// 			name: 'Max. deviation',
+		// 			data: max_array
+		// 		}, {
+		// 			name: 'Average TLX',
+		// 			data: avg_array,
+		// 			lineWidth:2
+		// 		}, {
+		// 			name: 'Min. deviation',
+		// 			data: min_array
+		// 		}]
+		// 	};
+
+		// 	chart = new Highcharts.Chart(options);
+
+		// }
+
+		$(".step_5").hide();
+		$(".step_2").show();
+		update_info();
 
 	}); // step 4 button
 

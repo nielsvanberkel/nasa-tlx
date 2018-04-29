@@ -556,44 +556,69 @@ section {
 	transform: rotate(-5deg);
 }
 
-/* Step 4 */
+/* Step 5 */
 
-.step_4 tbody th {
+.step_5 tbody th {
 	text-align: right;
 }
 
 /* Sliders */
 
-.slider {
+.tlx, .likert {
 	margin: auto;
 	width: 80%;
 }
 
-.slider::before,
-.slider::after {
+.tlx::before,
+.tlx::after,
+.likert::before,
+.likert::after {
 	color: #888;
 	line-height: .6;
 	position: absolute;
 	width: 5em;
 }
 
-.slider::before {
-	content: "Low";
+.tlx::before,
+.likert::before {
+	content: "Very Low";
 	margin-left: -6em;
 	text-align: right;
 }
 
-.slider::after {
-	content: "High";
+.tlx::after,
+.likert::after {
+	content: "Very High";
 	margin-right: -6em;
 	right: 0;
 }
 
-.slider.performance::before {
-	content: "Excellent";
+.tlx.performance::before {
+	content: "Perfect";
 }
 
-.slider.performance::after {
-	content: "Poor";
+.tlx.performance::after {
+	content: "Failure";
 }
 
+.likert::before {
+	content: "Totally agree";
+}
+
+.likert::after {
+	content: "Totally disagree";
+}
+
+.alert {
+	position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 3rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.alert-warning {
+	color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}

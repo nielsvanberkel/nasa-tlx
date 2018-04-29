@@ -10,104 +10,154 @@
 	<body>
 		<article>
 			<header>
-				<h1>Task Load Index (TLX)</h1>
+				<h1>Subjective Assessment</h1>
 			</header>
 			<section class="step_0">
-				<h2>Step 0: overview of TLX per proband per task</h2>
-				<div id="container"></div>
-				<button>Continue to step 1</button>
+				<h2>Welcome to the condition questionnaires!</h2>
+				<!-- <div id="container"></div> -->
+				<button>Get started</button>
 			</section>
 			<section class="step_1">
-				<h2>Step 1: choose proband and task</h2>
+				<h2>Participant and Experiment Group</h2>
+				<div class="alert alert-warning" role="alert"></div>
 				<div class="cf">
 					<section class="first">
-						<h3>Proband</h3>
-						<h4><label for="create_proband">Create new proband</label></h4>
+						<h3>Participant</h3>
+						<!-- <h4><label for="create_proband">Create new participant</label></h4> -->
 						<form>
-							<input type="text" id="create_proband" required>
-							<input type="submit" value="Create">
+							<input type="text" id="participant_id" required>
+							<!-- <input type="submit" value="Create"> -->
 						</form>
-						<h4>Choose proband</h4>
+						<h4>Starting task</h4>
 						<form class="list">
 							<div>
 								<div>
-									<input type="radio" name="probands" id="mathew_ormond" checked>
-									<label for="mathew_ormond">Mathew Ormond</label>
+									<input type="radio" name="starting_task" id="starting_task_1" value="1"> <!-- stroop -->
+									<label for="starting_task_1">Task I</label>
 								</div>
 								<div>
-									<input type="radio" name="probands" id="darcy_phillis">
-									<label for="darcy_phillis">Darcy Phillis</label>
+									<input type="radio" name="starting_task" id="starting_task_2" value="2"> <!-- stress -->
+									<label for="starting_task_2">Task II</label>
 								</div>
 							</div>
 						</form>
 					</section>
 					<section class="second">
-						<h3>Task</h3>
-						<h4><label for="create_task">Create new task</label></h4>
+						<h3>Experiment Group</h3>
+						<!-- <h4><label for="create_task">Create new task</label></h4>
 						<form>
 							<input type="text" id="create_task" required>
 							<input type="submit" value="Create">
-						</form>
-						<h4>Choose task</h4>
+						</form> -->
+						<!-- <h4>Choose task</h4> -->
 						<form class="list">
 							<div>
 								<div>
-									<input type="radio" name="tasks" id="flight_simulation" checked>
-									<label for="flight_simulation">Flight simulation</label>
+									<input type="radio" name="experiment_group" id="group_1" value="1">
+									<label for="group_1">Group 1</label>
 								</div>
 								<div>
-									<input type="radio" name="tasks" id="drinking_beer">
-									<label for="drinking_beer">Drinking beer</label>
+									<input type="radio" name="experiment_group" id="group_2" value="2">
+									<label for="group_2">Group 2</label>
+								</div>
+								<div>
+									<input type="radio" name="experiment_group" id="group_3" value="3">
+									<label for="group_3">Group 3</label>
+								</div>
+								<div>
+									<input type="radio" name="experiment_group" id="group_4" value="4">
+									<label for="group_4">Group 4</label>
+								</div>
+								<div>
+									<input type="radio" name="experiment_group" id="group_5" value="5">
+									<label for="group_5">Group 5</label>
+								</div>
+								<div>
+									<input type="radio" name="experiment_group" id="group_6" value="6">
+									<label for="group_6">Group 6</label>
 								</div>
 							</div>
 						</form>
 					</section>
 				</div>
-				<button>Continue to step 2</button>
-				<p class="go_back">or go <a href="#">back to the overview page</a></p>
+				<button>Next</button>
+				<!-- <p class="go_back">or go <a href="#">back to the overview page</a></p> -->
 			</section>
 			<section class="step_2">
-				<h2>Step 2: rating scales</h2>
+				<h2>Task Load Index</h2>
 				<section>
 					<h3>Mental demand</h3>
 					<p>How mentally demanding was the task?</p>
-					<div class="slider"></div>
+					<div class="tlx"></div>
 				</section>
 				<section>
 					<h3>Physical demand</h3>
 					<p>How physically demanding was the task?</p>
-					<div class="slider"></div>
+					<div class="tlx"></div>
 				</section>
 				<section>
 					<h3>Temporal demand</h3>
 					<p>How hurried or rushed was the pace of the task?</p>
-					<div class="slider"></div>
+					<div class="tlx"></div>
 				</section>
 				<section>
 					<h3>Performance</h3>
 					<p>How successful were you in accomplishing what you were asked to do?</p>
-					<div class="slider performance"></div>
+					<div class="tlx performance"></div>
 				</section>
 				<section>
 					<h3>Effort</h3>
 					<p>How hard did you have to work to accomplish your level of performance?</p>
-					<div class="slider"></div>
+					<div class="tlx"></div>
 				</section>
 				<section>
 					<h3>Frustration</h3>
 					<p>How insecure, discouraged, irritated, stressed, and annoyed were you?</p>
-					<div class="slider"></div>
+					<div class="tlx"></div>
 				</section>
-				<button>Continue to step 3</button>
+				<button>Next</button>
 			</section>
 			<section class="step_3">
-				<h2>Step 3: pair-wise comparison of factors</h2>
+				<h2>Pair-wise comparison of factors</h2>
 				<p class="alt">Select the member of each pair that provided the most significant source of workload:</p>
 			</section>
-			<section class="step_4">
-				<h2>Step 4: resulting data</h2>
+			<section class="step_4"> 
+				<h2>Likert-style ratings</h2>
+				<section>
+					<h3>Question 1</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<div class="likert"></div>
+				</section>
+				<section>
+					<h3>Question 2</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<div class="likert"></div>
+				</section>
+				<section>
+					<h3>Question 3</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<div class="likert"></div>
+				</section>
+				<section>
+					<h3>Question 4</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<div class="likert"></div>
+				</section>
+				<section>
+					<h3>Question 5</h3>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+					<div class="likert"></div>
+				</section>
+				<button>Next</button>
+			</section>
+			<section class="step_5">
+				<h2>Please attend to the next task block before continuing.</h2>
 				<div></div>
-				<button>Back to the overview page</button>
+				<button>Next Questionnaire</button>
+			</section>
+			<section class="step_6">
+				<h2>That's it!</h2>
+				<h4>Thanks for your participation!</h4>
 			</section>
 		</article>
 		<script src="setup/js/jquery-1.8.3.min.js"></script>
