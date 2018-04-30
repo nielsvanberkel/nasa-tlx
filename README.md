@@ -21,9 +21,13 @@ Learn more about it at the official [NASA-TLX website](http://humansystems.arc.n
 - Revised instructions to hand over to experimenter before continuing the next NASA round
 - TLX scales are reset before each round
 - Added ERROR warnings to user input texts (can be deactivated by setting variable enforce_user_input to false)
+- Removed Highcharts
+- Integrated Node Express Server for Data Collection
 
 ## Installation
-No installation required. Just [download](https://github.com/isellsoap/nasa-tlx/archive/master.zip) the ZIP file, unzip it and open `index.html` with a browser of your choice.
+[download](https://github.com/Til-D/nasa-tlx/archive/master.zip) the ZIP file, unzip it, install node, express, and other dependencies specified in the package.json, fire up the express server and navigate to localhost.
+
+For detailed instruction on how to install express, go to [https://expressjs.com/](https://expressjs.com/)
 
 ## Author
 - [Francesco Schwarz](https://github.com/isellsoap/)
@@ -32,12 +36,7 @@ No installation required. Just [download](https://github.com/isellsoap/nasa-tlx/
 ## Used libraries and utilities
 - [jQuery](http://jquery.com/) ([MIT license](https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt))
 - [jQuery UI](http://jqueryui.com/) ([MIT license](http://www.opensource.org/licenses/mit-license) or [GPL v2](http://opensource.org/licenses/GPL-2.0))
-- [Highcharts JS](http://www.highcharts.com/) (non-commercial use with [CC BY-NC 3.0](http://creativecommons.org/licenses/by-nc/3.0/) license)
+- [express](https://expressjs.com/) ([Creative Commons](https://creativecommons.org/licenses/by-sa/3.0/us/)
 
 ## License
 This NASA-TLX implementation is published under the [MIT license](http://www.opensource.org/licenses/mit-license) and [GPL v3](http://opensource.org/licenses/GPL-3.0).
-
-## Other implementations of the NASA-TLX
-You can also take a look at how others implemented the NASA-TLX:
-- [Keith Vertanen](http://www.keithv.com/software/nasatlx/) (implemented with HTML and JavaScript)
-- [Jonathan Polom ](https://github.com/jmpolom/NASA-TLX) (implemented with Python and wxPython)
