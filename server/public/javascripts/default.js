@@ -16,12 +16,12 @@ $(document).ready(function() {
 		],
 		tableoutput = "",
 		no_score = "–",
-		weighted_tlx = false,
+		weighted_tlx = true,
 		total_rounds = 2,
 		current_round = 1,
 		DEBUG = true,
 		settings = {},
-		enforce_user_input = false;
+		enforce_user_input = true;
 
 	/* functions */
 
@@ -98,7 +98,7 @@ $(document).ready(function() {
 
 	/* hide future steps */
 
-	$(".step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .alert").hide();
+	$(".step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_open_questions, .alert").hide();
 
 	/* initialize sliders */
 	reset_scales();
@@ -169,7 +169,11 @@ $(document).ready(function() {
 
 	$(".step_1 button").live("click", function() {
 
-		settings['participant_id'] = $('#participant_id').val();
+		if($('#participant_id').val() != '') {
+			settings['participant_id'] = $('#participant_id').val();
+		} else {
+			settings['participant_id'] = 'unspecified';
+		}
 		// settings['starting_task'] = $("input[name='starting_task']:checked").val();
 		settings['experiment_group'] = $("input[name='experiment_group']:checked").val();
 
@@ -330,44 +334,7 @@ $(document).ready(function() {
 		if(current_round <= total_rounds) {
 			$(".step_5").show();
 		} else {
-			$(".step_6").show();
-
-			server_data = {
-				'settings': settings,
-				'data': data_object
-			}
-
-			if(DEBUG) {
-		  		console.log('Sending data to server:');
-		     	console.log(server_data);
-			}
-
-			// send data to server
-			$.ajax ({
-		        type: "POST",
-		        url: '/',
-		        dataType: 'json',
-		        contentType: "application/json",
-		        data: JSON.stringify(server_data),
-		        success: function (result,status,xhr) {
-		        	console.log(status);
-		        	console.log(result);
-		        	if(result.status == 'ok') {
-		        		$(".alert").html('<h4>Success:</h4><p>Your data has been saved.</p>');
-		     			$(".alert").show();
-		        	} else {
-		        		$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
-		     			$(".alert").show();
-		        	}
-		        },
-		        error: function(xhr,status,error) {
-		        	console.log("Error when transmitting data!"); 
-		        	console.log(status);
-		        	console.log(error);
-		        	$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
-		     		$(".alert").show();
-		        }
-		    });
+			$(".step_open_questions").show();
 		}
 	});
 
@@ -381,5 +348,61 @@ $(document).ready(function() {
 		reset_scales();
 
 	}); // step 4 button
+
+	/* step 5: FINAL QUESTIONNAIRE */
+
+	$(".step_open_questions button").live("click", function() {
+		$(".alert").hide();
+		$(".step_open_questions").hide();
+		$(".step_6").show();
+
+		// save final questionnaire
+		data_object['questionnaire'] = {
+			'general_effect': $('#general_effect').val(),
+			'effect_task_performance': $('#effect_task_performance').val(),
+			'other_task_types': $('#other_task_types').val(),
+			'body_location': $('#body_location').val(),
+			'likes': $('#likes').val(),
+			'dislikes': $('#dislikes').val(),
+			'comments': $('#comments').val(),
+		};
+
+		server_data = {
+			'settings': settings,
+			'data': data_object
+		}
+
+		if(DEBUG) {
+	  		console.log('Sending data to server:');
+	     	console.log(server_data);
+		}
+
+		// send data to server
+		$.ajax ({
+	        type: "POST",
+	        url: '/',
+	        dataType: 'json',
+	        contentType: "application/json",
+	        data: JSON.stringify(server_data),
+	        success: function (result,status,xhr) {
+	        	console.log(status);
+	        	console.log(result);
+	        	if(result.status == 'ok') {
+	        		$(".alert").html('<h4>Success:</h4><p>Your data has been saved.</p>');
+	     			$(".alert").show();
+	        	} else {
+	        		$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
+	     			$(".alert").show();
+	        	}
+	        },
+	        error: function(xhr,status,error) {
+	        	console.log("Error when transmitting data!"); 
+	        	console.log(status);
+	        	console.log(error);
+	        	$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
+	     		$(".alert").show();
+	        }
+	    });
+	});
 
 });

@@ -23,6 +23,7 @@ Learn more about it at the official [NASA-TLX website](http://humansystems.arc.n
 - Added ERROR warnings to user input texts (can be deactivated by setting variable enforce_user_input to false)
 - Removed Highcharts
 - Integrated Node Express Server for Data Collection
+- Added final questionnaire with open text forms
 
 ## Installation
 [download](https://github.com/Til-D/nasa-tlx/archive/master.zip) the ZIP file, unzip it, install node, express, and other dependencies specified in the package.json, fire up the express server and navigate to localhost.
