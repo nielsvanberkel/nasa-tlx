@@ -137,71 +137,9 @@ $(document).ready(function() {
 	/* initialize sliders */
 	reset_scales();
 
-	/* step 0 */
+	/* step 0: Experiment SETTINGS */
 
-	$(".step_0 button").click(function() {
-
-		settings['age'] = $('#age').val();
-		settings['gender'] = $("input[name='gender']:checked").val();
-		settings['profession'] = $('#profession').val();
-
-		if (enforce_user_input && (settings['age'] == "" || settings['gender'] == null || settings['profession'] == "")) {
-		     // do something 
-		     $(".alert").html('ERROR: some data has not been provided!');
-		     $(".alert").show();
-
-		} else {
-
-		$(".step_0").hide();
-		$(".alert").hide();
-		$(".step_1").show();
-
-		}
-
-		if(DEBUG) {
-			console.log(settings);
-		}
-	});
-
-	/* step 1: Experiment SETTINGS */
-
-	$(".step_1 input[type='submit']").live("click", function() {
-		$(".alert").hide();
-
-		// remove error paragraphs at first (if proband error is shown and error occurs on task, the proband error disappears)
-		$(".step_1 .cf p").remove();
-
-		// value of input[type="text"]
-		var value = $.trim($(this).prev().val().replace(/ +(?= )/g,'')),
-			// formatted value for "id" and "for" attributes
-			formatted_value = value.toLowerCase().split(' ').join('_'),
-			// "subject" for error message ("proband" or "task")
-			subject = $(this).siblings("input[type='text']").attr("id").split('create_').join(''),
-			proband_exists = false,
-			error_message = "";
-
-		// check if proband already exists
-		$(this).parent().parent().find(".list label").each(function() {
-			if( $(this).html().toLowerCase() === value.toLowerCase() ) {
-				proband_exists = true;
-			}
-			return;
-		});
-
-		if ( error_message ) {
-			$(this).parent().append("<p class='error'>" + error_message + "</p>");
-		}
-		return false;
-	});
-
-	$(".step_1 .go_back a").click(function() {
-		$(".step_1 .cf p").remove();
-		$(".step_1").hide();
-		$(".step_0").show();
-		return false;
-	});
-
-	$(".step_1 button").live("click", function() {
+	$(".step_0 button").live("click", function() {
 
 		if($('#participant_id').val() != '') {
 			settings['participant_id'] = $('#participant_id').val();
@@ -218,32 +156,65 @@ $(document).ready(function() {
 
 		} else {
 
-			// prepare steps for step 2
-
-			data_object = {
-				"button_clicks": {}, 	// tlx weights
-				"tlx_value": {},		// tlx raw
-				"likert_value": {}		// subjective feedback
-			};
-
-			// reset input values and thrown error paragraphs caused by input submits
-			$(".step_1 input[type='text']").val("");
-			$(".step_1 .cf p").remove();
-
-			// check if proband already completed a task
-			var proband_exists = false,
-				task_exists = false;
-
-			$(".step_1").hide();
-			$(".step_2").show();
-			update_info();
+			$(".step_0").hide();
+			$(".alert").hide();
+			$(".step_1").show();
 
 		}
 
 		if(DEBUG) {
 	     	console.log(settings);
-	     }
+	    }
 
+	});
+
+	/* step 1: Demographics */
+
+	$(".step_1 button").click(function() {
+
+		settings['age'] = $('#age').val();
+		settings['gender'] = $("input[name='gender']:checked").val();
+		settings['profession'] = $('#profession').val();
+
+		if (enforce_user_input && (settings['age'] == "" || settings['gender'] == null || settings['profession'] == "")) {
+		     // do something 
+		     $(".alert").html('ERROR: some data has not been provided!');
+		     $(".alert").show();
+
+		} else {
+
+		// prepare steps for step 2
+
+		data_object = {
+			"button_clicks": {}, 	// tlx weights
+			"tlx_value": {},		// tlx raw
+			"likert_value": {}		// subjective feedback
+		};
+
+		// reset input values and thrown error paragraphs caused by input submits
+		$(".step_1 input[type='text']").val("");
+		$(".step_1 .cf p").remove();
+
+		// check if proband already completed a task
+		var proband_exists = false,
+			task_exists = false;
+
+		$(".step_1").hide();
+		$(".step_2").show();
+
+		}
+
+		if(DEBUG) {
+			console.log(settings);
+		}
+	});
+
+	// back button: currently not in use
+	$(".step_1 .go_back a").click(function() {
+		$(".step_1 .cf p").remove();
+		$(".step_1").hide();
+		$(".step_0").show();
+		return false;
 	});
 
 	/* step 2: NASA TLX */

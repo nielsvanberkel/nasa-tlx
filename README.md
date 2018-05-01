@@ -1,7 +1,7 @@
 # NASA Task Load Index (NASA-TLX)
 ========
 
-An implementation of the NASA Task Load Index (NASA-TLX).
+An implementation of the NASA Task Load Index (NASA-TLX) including subjective feedback on conditions and demographic survey.
 
 ## General information
 From the respective [Wikipedia article](http://en.wikipedia.org/wiki/NASA-TLX):
