@@ -28,7 +28,8 @@ router.post('/', function(req, res, next) {
   		participant_id,
   		ts = Date.now(),
         logfile,
-        valid_request = true;
+        valid_request = true,
+        NEWLINE = '\r\n';
 
     if(req.body.settings) {
         settings = req.body.settings;
@@ -52,11 +53,12 @@ router.post('/', function(req, res, next) {
     }
 
     if(valid_request) {
-        logfile = LOGDIRECTORY + participant_id + '_' + ts + LOGFILEEXTENSION;
+        logfile = LOGDIRECTORY + participant_id + LOGFILEEXTENSION;
 
         fs.exists(logfile, function(exists) {
+            var line = JSON.stringify(req.body) + NEWLINE;
             if (!exists) {
-                fs.writeFile(logfile, JSON.stringify(req.body), function(err) {
+                fs.writeFile(logfile, line, function(err) {
                     if(err) {
                         console.log(err);
                         res.send(err);
@@ -66,7 +68,7 @@ router.post('/', function(req, res, next) {
                     }
                 })
             } else {
-                fs.appendFile(logfile, JSON.stringify(req.body), function(err) {
+                fs.appendFile(logfile, line, function(err) {
                     if(err) {
                         console.log(err);
                         res.send(err);

@@ -1,6 +1,10 @@
 $(document).ready(function() {
 
-	/* variables */
+	/* constants & variables */
+
+	const STATUS_COMPLETE = 'complete';			// indicates complete dataset on server
+	const STATUS_INCOMPLETE = 'incomplete';		
+	const VERSION = '1.0'; 						// to keep track of changes affecting log file format
 
 	var random_pairs,
 		data_object,
@@ -16,8 +20,8 @@ $(document).ready(function() {
 		],
 		tableoutput = "",
 		no_score = "–",
-		weighted_tlx = true,
-		total_rounds = 2,
+		weighted_tlx = false,
+		total_rounds = 6,
 		current_round = 1,
 		DEBUG = true,
 		settings = {},
@@ -94,6 +98,36 @@ $(document).ready(function() {
 			step: 1,
 			value: 1
 		});
+	}
+
+	function create_data_log(settings, data, status) {
+
+		return {
+			'settings': settings,
+			'data': data_object,
+			'version': VERSION,
+			'status': status 
+		}
+	}
+
+	function log_partial_data(settings, data) {
+
+		data = create_data_log(settings, data, STATUS_INCOMPLETE);
+
+		$.ajax ({
+	        type: "POST",
+	        url: '/',
+	        dataType: 'json',
+	        contentType: "application/json",
+	        data: JSON.stringify(data),
+	        success: function (result,status,xhr) {
+	        	console.log("Partial dataset saved!"); 
+	        },
+	        error: function(xhr,status,error) {
+	        	console.log("Error when transmitting partial data!"); 
+	        }
+	    });
+
 	}
 
 	/* hide future steps */
@@ -332,7 +366,10 @@ $(document).ready(function() {
 
 		current_round++;
 		if(current_round <= total_rounds) {
+			
 			$(".step_5").show();
+			log_partial_data(settings, data_object);
+
 		} else {
 			$(".step_open_questions").show();
 		}
@@ -355,6 +392,7 @@ $(document).ready(function() {
 		$(".alert").hide();
 		$(".step_open_questions").hide();
 		$(".step_6").show();
+		$(window).scrollTop(0);
 
 		// save final questionnaire
 		data_object['questionnaire'] = {
@@ -367,17 +405,14 @@ $(document).ready(function() {
 			'comments': $('#comments').val(),
 		};
 
-		server_data = {
-			'settings': settings,
-			'data': data_object
-		}
+		server_data = create_data_log(settings, data_object, STATUS_COMPLETE);
 
 		if(DEBUG) {
 	  		console.log('Sending data to server:');
 	     	console.log(server_data);
 		}
 
-		// send data to server
+		// send final dataset to server
 		$.ajax ({
 	        type: "POST",
 	        url: '/',
