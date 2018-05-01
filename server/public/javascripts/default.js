@@ -369,6 +369,7 @@ $(document).ready(function() {
 		data_object['questionnaire'] = {
 			'general_effect': $('#general_effect').val(),
 			'effect_task_performance': $('#effect_task_performance').val(),
+			'effect_stress_levels': $('#effect_stress_levels').val(),
 			'other_task_types': $('#other_task_types').val(),
 			'body_location': $('#body_location').val(),
 			'likes': $('#likes').val(),
