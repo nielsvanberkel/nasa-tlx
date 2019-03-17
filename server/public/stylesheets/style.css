@@ -643,3 +643,8 @@ textarea {
 	padding: 20px;
 	font-size: 14px;
 }
+
+/* IAT */
+#IAT_category_two {
+	font-style: italic;
+}

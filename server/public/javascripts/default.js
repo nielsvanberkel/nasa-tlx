@@ -1,3 +1,106 @@
+/* functions */
+
+/* randomly shuffle an array */
+
+function shuffle(array) {
+	var top = array.length,
+		tmp, current;
+
+	if(top) {
+		while(--top) {
+			current = Math.floor(Math.random() * (top + 1));
+			tmp = array[current];
+			array[current] = array[top];
+			array[top] = tmp;
+		}
+	}
+
+	return array;
+}
+
+/* create an array of pairs. formula: n! / ( (n - k)! * k! ) */
+
+function pair_combinator(array) {
+
+	var length = array.length,
+		result = [],
+		counter = 0,
+		i, j;
+
+	for (i = 0; i < length; i++) {
+		for (j = i; j < length - 1; j++) {
+			result[counter] = shuffle([ [ array[i][0], array[i][1] ], [ array[j + 1][0], array[j + 1][1] ] ]);
+			counter++;
+		}
+	}
+
+	return shuffle(result);
+
+}
+
+/* creates an array with a given length and fills it up with a given value */
+
+function new_filled_array(length, value) {
+	var array = new Array(length);
+	while (--length >= 0) {
+		array[length] = value;
+	}
+	return array;
+}
+
+function update_info() {
+	// console.log("updating info");
+	$(".info").remove();
+	$("<ul class='info'><li><strong>Participant:</strong> " + settings['participant_id'] + "</li><li><strong>Group:</strong> " + settings['experiment_group'] + "</li><li><strong>Round:</strong> " + current_round + "</li></ul>").insertAfter("h2");
+}
+
+function reset_scales() {
+
+	$(".tlx").slider({
+		max: 100,
+		min: 0,
+		step: 5,
+		value: 0
+	});
+
+	$(".likert").slider({
+		max: 7,
+		min: 1,
+		step: 1,
+		value: 1
+	});
+}
+
+function create_data_log(settings, data, status) {
+
+	return {
+		'settings': settings,
+		'data': data_object,
+		'version': VERSION,
+		'status': status 
+	}
+}
+
+function log_partial_data(settings, data) {
+
+	data = create_data_log(settings, data, STATUS_INCOMPLETE);
+
+	$.ajax ({
+		type: "POST",
+		url: '/',
+		dataType: 'json',
+		contentType: "application/json",
+		data: JSON.stringify(data),
+		success: function (result,status,xhr) {
+			console.log("Partial dataset saved!"); 
+		},
+		error: function(xhr,status,error) {
+			console.log("Error when transmitting partial data!"); 
+		}
+	});
+
+}
+
 $(document).ready(function() {
 
 	/* constants & variables */
@@ -27,112 +130,11 @@ $(document).ready(function() {
 		settings = {},
 		enforce_user_input = true;
 
-	/* functions */
-
-	/* randomly shuffle an array */
-
-	function shuffle(array) {
-		var top = array.length,
-			tmp, current;
-
-		if(top) {
-			while(--top) {
-				current = Math.floor(Math.random() * (top + 1));
-				tmp = array[current];
-				array[current] = array[top];
-				array[top] = tmp;
-			}
-		}
-
-		return array;
-	}
-
-	/* create an array of pairs. formula: n! / ( (n - k)! * k! ) */
-
-	function pair_combinator(array) {
-
-		var length = array.length,
-			result = [],
-			counter = 0,
-			i, j;
-
-		for (i = 0; i < length; i++) {
-			for (j = i; j < length - 1; j++) {
-				result[counter] = shuffle([ [ array[i][0], array[i][1] ], [ array[j + 1][0], array[j + 1][1] ] ]);
-				counter++;
-			}
-		}
-
-		return shuffle(result);
-
-	}
-
-	/* creates an array with a given length and fills it up with a given value */
-
-	function new_filled_array(length, value) {
-		var array = new Array(length);
-		while (--length >= 0) {
-			array[length] = value;
-		}
-		return array;
-	}
-
-	function update_info() {
-		// console.log("updating info");
-		$(".info").remove();
-		$("<ul class='info'><li><strong>Participant:</strong> " + settings['participant_id'] + "</li><li><strong>Group:</strong> " + settings['experiment_group'] + "</li><li><strong>Round:</strong> " + current_round + "</li></ul>").insertAfter("h2");
-	}
-
-	function reset_scales() {
-
-		$(".tlx").slider({
-			max: 100,
-			min: 0,
-			step: 5,
-			value: 0
-		});
-
-		$(".likert").slider({
-			max: 7,
-			min: 1,
-			step: 1,
-			value: 1
-		});
-	}
-
-	function create_data_log(settings, data, status) {
-
-		return {
-			'settings': settings,
-			'data': data_object,
-			'version': VERSION,
-			'status': status 
-		}
-	}
-
-	function log_partial_data(settings, data) {
-
-		data = create_data_log(settings, data, STATUS_INCOMPLETE);
-
-		$.ajax ({
-	        type: "POST",
-	        url: '/',
-	        dataType: 'json',
-	        contentType: "application/json",
-	        data: JSON.stringify(data),
-	        success: function (result,status,xhr) {
-	        	console.log("Partial dataset saved!"); 
-	        },
-	        error: function(xhr,status,error) {
-	        	console.log("Error when transmitting partial data!"); 
-	        }
-	    });
-
-	}
+	
 
 	/* hide future steps */
 
-	$(".step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_open_questions, .alert").hide();
+	$(".step_IAT, .step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_7, .step_open_questions, .alert").hide();
 
 	/* initialize sliders */
 	reset_scales();
@@ -155,11 +157,10 @@ $(document).ready(function() {
 		     $(".alert").show();
 
 		} else {
-
 			$(".step_0").hide();
 			$(".alert").hide();
-			$(".step_1").show();
-
+			$(".step_IAT").show();
+			// $(".step_1").show();
 		}
 
 		if(DEBUG) {
@@ -167,6 +168,19 @@ $(document).ready(function() {
 	    }
 
 	});
+
+	/* step IAT: */
+	$("#IAT_explanation button").click(function() {
+		startIAT();
+	})
+	
+	$("#IAT_end button").click(function() {
+		// next questionnaire
+		$(".step_IAT").hide();
+		$(".step_1").show();
+
+	});
+
 
 	/* step 1: Demographics */
 
@@ -217,9 +231,16 @@ $(document).ready(function() {
 		return false;
 	});
 
-	/* step 2: NASA TLX */
-
+	/* step 2: Story */
 	$(".step_2 button").live("click", function() {
+		$(".step_2").hide();
+		$(".step_3").show();
+		$(window).scrollTop(0);
+	});
+
+	/* step 3: NASA TLX */
+
+	$(".step_3 button").live("click", function() {
 		$(".alert").hide();
 
 		// save tlx values
@@ -244,29 +265,29 @@ $(document).ready(function() {
 
 		if(weighted_tlx) {
 
-			$(".step_3").show();
+			$(".step_4").show();
 
 			// start button for pairs
-			if ( $(".step_3").find("div").length ) {
-				$(".step_3 div").html("<button>Start</button>");
+			if ( $(".step_4").find("div").length ) {
+				$(".step_4 div").html("<button>Start</button>");
 			} else {
-				$(".step_3").append("<div><button>Start</button></div>");
+				$(".step_4").append("<div><button>Start</button></div>");
 			}
 
 			// remove/reset "to go" counter
-			$(".step_3 .to_go").remove();
+			$(".step_4 .to_go").remove();
 
 		} else {
-			
-			$(".step_4").show();
+
+			$(".step_5").show();
 
 		}
 
 	});
 
-	/* step 3: TLX Weights */
+	/* step 4: TLX Weights */
 
-	$(".step_3 button").live("click", function() {
+	$(".step_4 button").live("click", function() {
 		$(".alert").hide();
 
 		// if a pair button is clicked (start button hasn't got class attribute)
@@ -302,23 +323,23 @@ $(document).ready(function() {
 				.parent()
 				.html("<button class='" + random_pairs[counter][0][0] + "'>" + random_pairs[counter][0][1] + "</button> or " + "<button class='" + random_pairs[counter][1][0] + "'>" + random_pairs[counter][1][1] + "</button>");
 			// "to go" counter
-			if ( !$(".step_3").find(".to_go").length ) {
-				$(".step_3").append("<p class='highlight to_go'></p>");
+			if ( !$(".step_4").find(".to_go").length ) {
+				$(".step_4").append("<p class='highlight to_go'></p>");
 			}
-			$(".step_3 .to_go").html("<strong>" + pairs_length + "</strong> to go!");
+			$(".step_4 .to_go").html("<strong>" + pairs_length + "</strong> to go!");
 		} else {
 			
 
-			$(".step_3").hide();
-			$(".step_4").show();
+			$(".step_4").hide();
+			$(".step_5").show();
 
 		}
 
-	}); // step 3 button
+	}); // step 4 button
 
-	/* step 4: subjective feedback */
+	/* step 5: subjective feedback */
 
-	$(".step_4 button").live("click", function() {
+	$(".step_5 button").live("click", function() {
 		$(".alert").hide();
 
 		// save likert values
@@ -333,12 +354,12 @@ $(document).ready(function() {
 			console.log(data_object);
 		}
 
-		$(".step_4").hide();
+		$(".step_5").hide();
 
 		current_round++;
 		if(current_round <= total_rounds) {
 			
-			$(".step_5").show();
+			$(".step_6").show();
 			log_partial_data(settings, data_object);
 
 		} else {
@@ -346,23 +367,31 @@ $(document).ready(function() {
 		}
 	});
 
-	/* step 5: NEXT QUESTIONNAIRE */
+	/* step 6: NEXT QUESTIONNAIRE */
 
-	$(".step_5 button").live("click", function() {
+	$(".step_6 button").live("click", function() {
 		$(".alert").hide();
-		$(".step_5").hide();
-		$(".step_2").show();
+		$(".step_6").hide();
+		$(".step_3").show();
 		update_info();
 		reset_scales();
 
 	}); // step 4 button
 
-	/* step 5: FINAL QUESTIONNAIRE */
+	$(".step_7 button").live("click", function() {
+		$(".alert").hide();
+		$(".step_6").hide();
+		$(".step_3").show();
+		update_info();
+		reset_scales();
+	});  // step 5 button
+
+	/* step 6: FINAL QUESTIONNAIRE */
 
 	$(".step_open_questions button").live("click", function() {
 		$(".alert").hide();
 		$(".step_open_questions").hide();
-		$(".step_6").show();
+		$(".step_7").show();
 		$(window).scrollTop(0);
 
 		// save final questionnaire

@@ -81,6 +81,40 @@
 				<!-- <p class="go_back">or go <a href="#">back to the overview page</a></p> -->
 			</section>
 
+			<section class="step_IAT">
+				<h2>IAT</h2>
+
+				<div id="IAT_explanation">
+					<p>Press the <em>I key</em> if the text/image matches either category.
+						Press the <em>E key</em> for anything else.</p>
+
+					<p>If you make an error, you will see a X. When this happens, make the CORRECT response to proceed.</p>
+					
+					<p>Go fast. A few errors are OK.</p>
+
+					<p>Example:</p>
+					<p id="IAT_category_one">Category one</p>
+					<img src="images/1.jpg" />
+					<p id="IAT_category_two">Category two</p>
+
+					<button id="IAT_start">Start</button>
+				</div>
+
+				<div id="IAT_test" style="display:none">
+					<p id="IAT_category_one">Category one</p>
+					<img id="IAT_image" />
+					<p id="IAT_category_two">Category two</p>
+					<div class="alert alert-warning" role="alert">X</div>
+				</div>
+
+				<div id="IAT_end" style="display:none">
+					<p><strong>Notify the experimenter</strong> that you are ready to continue with the next task. Then, come back and fill in the next questionnaire.</p>
+					<button>Next Questionnaire</button>
+				</div>
+
+			</section>
+
+
 			<section class="step_1">
 				<h2>Demographics</h2>
 				<div class="cf">
@@ -123,11 +157,33 @@
 			</section>
 
 			<section class="step_2">
-				<h2>Task Load Index</h2>
+				<h2>What Airlines Fly the Boeing 737 Max 8</h2>
+				<p>The plane that crashed on Sunday outside Addis Ababa, Ethiopia, revived questions about a new Boeing model that is growing in popularity among airlines.</p>
+				
+				<p>The crash was the second in just five months involving the model, a Boeing 737 Max 8. Concerns first surfaced after a Lion Air flight crashed near Indonesia in October, killing all 189 people aboard.</p>
+						
+				<p>The 737 class is a workhorse for airlines worldwide, and the single-aisle 737 Max has been Boeing’s best-selling plane ever. More than 350 of the Max 8 planes are currently registered, and many more are on order.</p>
+						
+				<p>Max 8 planes flew more than 8,500 flights worldwide in the week beginning Feb. 25, according to Flightradar24, a flight tracking service.</p>
+						
+				<p>Two American carriers that use the planes heavily — Southwest Airlines and American Airlines — have said they will continue to fly them. But on Monday, China and Indonesia ordered their airlines to ground all of the Max 8 jets they operate. Some other carriers, including Cayman Airways and Comair, followed suit.</p>
+
+				<p>Investigators have not yet determined the cause of the Ethiopia crash, but they recovered both the flight data recorder and the cockpit voice recorder on Monday.</p>
+						
+				<p>Some circumstances of the crash, such as unusual altitude changes after takeoff, were similar to those in the Lion Air flight.</p>
+						
+				<p>Five months later, the causes of the Indonesian crash are still under investigation. But the tragedy revealed that Boeing and the United States Federal Aviation Administration determined that pilots did not need to be informed of changes to the Max 8’s flight control system, which may have contributed to the crash.</p>
+
+				<button>Next</button>
+			</section>
+				
+
+			<section class="step_3">
+				<h3>Task Load Index</h3>
 				<section>
 					<h3>Mental demand</h3>
-					<p>How mentally demanding was the task?</p>
-					<div class="tlx"></div>
+						<p>How mentally demanding was the task?</p>
+						<div class="tlx"></div>
 				</section>
 				<section>
 					<h3>Physical demand</h3>
@@ -156,7 +212,7 @@
 				</section>
 				<button>Next</button>
 			</section>
-			<section class="step_3">
+			<section class="step_4">
 				<h2>Pair-wise comparison of factors</h2>
 				<p class="alt">In the following, please select the member of each pair that provided the most significant source of workload. As a reminder, here are the factor definitions again:
 					<ul class="left">
@@ -170,7 +226,7 @@
 				</p>
 				<hr />
 			</section>
-			<section class="step_4"> 
+			<section class="step_5"> 
 				<h2>Likert-style ratings</h2>
 				<section>
 					<h3>Perceived Stress</h3>
@@ -194,7 +250,7 @@
 				</section>
 				<button>Next</button>
 			</section>
-			<section class="step_5">
+			<section class="step_6">
 				<h2>Questionnaire completed!</h2>
 				<div></div>
 				<p><strong>Notify the experimenter</strong> that you are ready to continue with the next task. Then, come back and fill in the next questionnaire.</p>
@@ -221,7 +277,7 @@
 				<textarea id="comments"></textarea>
 				<button>Next</button>
 			</section>
-			<section class="step_6">
+			<section class="step_7">
 				<h2>That's it!</h2>
 				<div class="alert alert-warning" role="alert"></div>
 				<h4>Thanks for your participation!</h4>
@@ -230,5 +286,6 @@
 		<script src="/javascripts/jquery-1.8.3.min.js"></script>
 		<script src="/javascripts/jquery-ui-1.9.2.custom.min.js"></script>
 		<script src="/javascripts/default.js"></script>
+		<script src="/javascripts/IAT.js"></script>
 	</body>
 </html>
