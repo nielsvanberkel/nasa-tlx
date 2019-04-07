@@ -130,11 +130,13 @@ $(document).ready(function() {
 		settings = {},
 		enforce_user_input = true;
 
-	
-
 	/* hide future steps */
 
 	$(".step_IAT, .step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_7, .step_open_questions, .alert").hide();
+
+	// temp debug
+	$(".step_0").hide();
+	$(".step_IAT").show();
 
 	/* initialize sliders */
 	reset_scales();
