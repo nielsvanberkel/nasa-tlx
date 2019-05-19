@@ -645,22 +645,22 @@ textarea {
 }
 
 /* IAT */
-#IAT_test {
+#BIAT_test {
 	text-align: center;
 	margin-top: 20px;
 }
 
-#IAT_test p {
+#BIAT_test p {
 	margin-bottom: 6px;
 }
 
-#IAT_instructions {
+#BIAT_instructions {
 	height: 100%;
 	margin-top: 60px;
 	align-items: center; 
 }
 
-#IAT_word {
+#BIAT_word {
 	font-size: 4em;
 	height: 100%;
 	margin-top: 60px;
@@ -671,11 +671,11 @@ textarea {
 
 .attributeClass {
 	font-size: 1.4em;
-	color: red;
+	color: black;
 	
 }
 
 .attitudeClass {
 	font-size: 1.4em;
-	color: aqua;
+	color: orange;
 }

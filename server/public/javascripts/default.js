@@ -6,8 +6,8 @@ function shuffle(array) {
 	var top = array.length,
 		tmp, current;
 
-	if(top) {
-		while(--top) {
+	if (top) {
+		while (--top) {
 			current = Math.floor(Math.random() * (top + 1));
 			tmp = array[current];
 			array[current] = array[top];
@@ -29,7 +29,7 @@ function pair_combinator(array) {
 
 	for (i = 0; i < length; i++) {
 		for (j = i; j < length - 1; j++) {
-			result[counter] = shuffle([ [ array[i][0], array[i][1] ], [ array[j + 1][0], array[j + 1][1] ] ]);
+			result[counter] = shuffle([[array[i][0], array[i][1]], [array[j + 1][0], array[j + 1][1]]]);
 			counter++;
 		}
 	}
@@ -72,12 +72,11 @@ function reset_scales() {
 }
 
 function create_data_log(settings, data, status) {
-
 	return {
 		'settings': settings,
 		'data': data_object,
 		'version': VERSION,
-		'status': status 
+		'status': status
 	}
 }
 
@@ -85,28 +84,28 @@ function log_partial_data(settings, data) {
 
 	data = create_data_log(settings, data, STATUS_INCOMPLETE);
 
-	$.ajax ({
+	$.ajax({
 		type: "POST",
 		url: '/',
 		dataType: 'json',
 		contentType: "application/json",
 		data: JSON.stringify(data),
-		success: function (result,status,xhr) {
-			console.log("Partial dataset saved!"); 
+		success: function (result, status, xhr) {
+			console.log("Partial dataset saved!");
 		},
-		error: function(xhr,status,error) {
-			console.log("Error when transmitting partial data!"); 
+		error: function (xhr, status, error) {
+			console.log("Error when transmitting partial data!");
 		}
 	});
 
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
 
 	/* constants & variables */
 
 	const STATUS_COMPLETE = 'complete';			// indicates complete dataset on server
-	const STATUS_INCOMPLETE = 'incomplete';		
+	const STATUS_INCOMPLETE = 'incomplete';
 	const VERSION = '1.0'; 						// to keep track of changes affecting log file format
 
 	var random_pairs,
@@ -132,20 +131,16 @@ $(document).ready(function() {
 
 	/* hide future steps */
 
-	$(".step_IAT, .step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_7, .step_open_questions, .alert").hide();
-
-	// temp debug
-	$(".step_0").hide();
-	$(".step_IAT").show();
+	$(".step_BIAT_1, .step_1, .step_2, .step_3, .step_4, .step_5, .step_6, .step_7, .step_open_questions, .alert").hide();
 
 	/* initialize sliders */
 	reset_scales();
 
 	/* step 0: Experiment SETTINGS */
 
-	$(".step_0 button").live("click", function() {
+	$(".step_0 button").live("click", function () {
 
-		if($('#participant_id').val() != '') {
+		if ($('#participant_id').val() != '') {
 			settings['participant_id'] = $('#participant_id').val();
 		} else {
 			settings['participant_id'] = 'unspecified';
@@ -154,79 +149,74 @@ $(document).ready(function() {
 		settings['experiment_group'] = $("input[name='experiment_group']:checked").val();
 
 		if (enforce_user_input && (settings['participant_id'] == "" || settings['experiment_group'] == null)) {
-		     // do something 
-		     $(".alert").html('ERROR: some variables have not been set!');
-		     $(".alert").show();
-
+			// do something 
+			$(".alert").html('ERROR: some variables have not been set!');
+			$(".alert").show();
 		} else {
 			$(".step_0").hide();
 			$(".alert").hide();
-			$(".step_IAT").show();
-			// $(".step_1").show();
+			// start BIAT
+			$(".step_BIAT").show();
+			startIAT(settings, "Asian", "American");
 		}
 
-		if(DEBUG) {
-	     	console.log(settings);
-	    }
-
+		if (DEBUG) {
+			console.log(settings);
+		}
 	});
 
-	/* step IAT: */
-	$("#IAT_explanation button").click(function() {
-		startIAT();
-	})
-	
-	$("#IAT_end button").click(function() {
+	$("#BIAT_end button").click(function () {
 		// next questionnaire
-		$(".step_IAT").hide();
-		$(".step_1").show();
+		alert("next clicked");
 
+		$(".step_BIAT").hide();
+		$(".step_2").show();
 	});
 
 
 	/* step 1: Demographics */
 
-	$(".step_1 button").click(function() {
+	$(".step_1 button").click(function () {
 
 		settings['age'] = $('#age').val();
 		settings['gender'] = $("input[name='gender']:checked").val();
 		settings['profession'] = $('#profession').val();
 
 		if (enforce_user_input && (settings['age'] == "" || settings['gender'] == null || settings['profession'] == "")) {
-		     // do something 
-		     $(".alert").html('ERROR: some data has not been provided!');
-		     $(".alert").show();
+			// do something 
+			$(".alert").html('ERROR: some data has not been provided!');
+			$(".alert").show();
 
 		} else {
 
-		// prepare steps for step 2
+			// prepare steps for step 2
 
-		data_object = {
-			"button_clicks": {}, 	// tlx weights
-			"tlx_value": {},		// tlx raw
-			"likert_value": {}		// subjective feedback
-		};
+			data_object = {
+				"button_clicks": {}, 	// tlx weights
+				"tlx_value": {},		// tlx raw
+				"likert_value": {}		// subjective feedback
+			};
 
-		// reset input values and thrown error paragraphs caused by input submits
-		$(".step_1 input[type='text']").val("");
-		$(".step_1 .cf p").remove();
+			// reset input values and thrown error paragraphs caused by input submits
+			$(".step_1 input[type='text']").val("");
+			$(".step_1 .cf p").remove();
 
-		// check if proband already completed a task
-		var proband_exists = false,
-			task_exists = false;
+			// check if proband already completed a task
+			var proband_exists = false,
+				task_exists = false;
 
-		$(".step_1").hide();
-		$(".step_2").show();
+			$(".step_1").hide();
+			$(".step_2").show();
 
 		}
 
-		if(DEBUG) {
+		if (DEBUG) {
 			console.log(settings);
 		}
 	});
 
 	// back button: currently not in use
-	$(".step_1 .go_back a").click(function() {
+	$(".step_1 .go_back a").click(function () {
 		$(".step_1 .cf p").remove();
 		$(".step_1").hide();
 		$(".step_0").show();
@@ -234,7 +224,7 @@ $(document).ready(function() {
 	});
 
 	/* step 2: Story */
-	$(".step_2 button").live("click", function() {
+	$(".step_2 button").live("click", function () {
 		$(".step_2").hide();
 		$(".step_3").show();
 		$(window).scrollTop(0);
@@ -242,18 +232,18 @@ $(document).ready(function() {
 
 	/* step 3: NASA TLX */
 
-	$(".step_3 button").live("click", function() {
+	$(".step_3 button").live("click", function () {
 		$(".alert").hide();
 
 		// save tlx values
-		
+
 		data_object["tlx_value"][current_round] = [];
 
-		$(".tlx").each(function(i) {
+		$(".tlx").each(function (i) {
 			data_object["tlx_value"][current_round][i] = $(this).slider("option", "value");
 		});
 
-		if(DEBUG) {
+		if (DEBUG) {
 			console.log(data_object);
 		}
 
@@ -265,12 +255,12 @@ $(document).ready(function() {
 
 		$(".step_2").hide();
 
-		if(weighted_tlx) {
+		if (weighted_tlx) {
 
 			$(".step_4").show();
 
 			// start button for pairs
-			if ( $(".step_4").find("div").length ) {
+			if ($(".step_4").find("div").length) {
 				$(".step_4 div").html("<button>Start</button>");
 			} else {
 				$(".step_4").append("<div><button>Start</button></div>");
@@ -289,29 +279,29 @@ $(document).ready(function() {
 
 	/* step 4: TLX Weights */
 
-	$(".step_4 button").live("click", function() {
+	$(".step_4 button").live("click", function () {
 		$(".alert").hide();
 
 		// if a pair button is clicked (start button hasn't got class attribute)
-		if( $(this).attr("class") ) {
+		if ($(this).attr("class")) {
 			pairs_length--;
 			counter++;
 
 			// initalize weight object if non-existent
 
 			if (data_object["button_clicks"][current_round] == null) {
-				
+
 				data_object["button_clicks"][current_round] = {}; //new_filled_array(demands.length, 0);
 
-				for ( var i = 0; i < demands.length; i++ ) {
+				for (var i = 0; i < demands.length; i++) {
 					data_object["button_clicks"][current_round][demands[i][0]] = 0;
 				}
 
 			}
 
-			for ( var i = 0; i < demands.length; i++ ) {
+			for (var i = 0; i < demands.length; i++) {
 
-				if ( $(this).attr("class") === demands[i][0] ) {
+				if ($(this).attr("class") === demands[i][0]) {
 					data_object["button_clicks"][current_round][demands[i][0]] += 1;
 					break;
 				}
@@ -319,18 +309,18 @@ $(document).ready(function() {
 		}
 
 		// continue as long as there are reaming pairs to be clicked
-		if ( pairs_length ) {
+		if (pairs_length) {
 			// show the next pair
 			$(this)
 				.parent()
 				.html("<button class='" + random_pairs[counter][0][0] + "'>" + random_pairs[counter][0][1] + "</button> or " + "<button class='" + random_pairs[counter][1][0] + "'>" + random_pairs[counter][1][1] + "</button>");
 			// "to go" counter
-			if ( !$(".step_4").find(".to_go").length ) {
+			if (!$(".step_4").find(".to_go").length) {
 				$(".step_4").append("<p class='highlight to_go'></p>");
 			}
 			$(".step_4 .to_go").html("<strong>" + pairs_length + "</strong> to go!");
 		} else {
-			
+
 
 			$(".step_4").hide();
 			$(".step_5").show();
@@ -341,26 +331,26 @@ $(document).ready(function() {
 
 	/* step 5: subjective feedback */
 
-	$(".step_5 button").live("click", function() {
+	$(".step_5 button").live("click", function () {
 		$(".alert").hide();
 
 		// save likert values
 
 		data_object["likert_value"][current_round] = [];
 
-		$(".likert").each(function(i) {
+		$(".likert").each(function (i) {
 			data_object["likert_value"][current_round][i] = $(this).slider("option", "value");
 		});
 
-		if(DEBUG) {
+		if (DEBUG) {
 			console.log(data_object);
 		}
 
 		$(".step_5").hide();
 
 		current_round++;
-		if(current_round <= total_rounds) {
-			
+		if (current_round <= total_rounds) {
+
 			$(".step_6").show();
 			log_partial_data(settings, data_object);
 
@@ -371,7 +361,7 @@ $(document).ready(function() {
 
 	/* step 6: NEXT QUESTIONNAIRE */
 
-	$(".step_6 button").live("click", function() {
+	$(".step_6 button").live("click", function () {
 		$(".alert").hide();
 		$(".step_6").hide();
 		$(".step_3").show();
@@ -380,7 +370,7 @@ $(document).ready(function() {
 
 	}); // step 4 button
 
-	$(".step_7 button").live("click", function() {
+	$(".step_7 button").live("click", function () {
 		$(".alert").hide();
 		$(".step_6").hide();
 		$(".step_3").show();
@@ -390,7 +380,7 @@ $(document).ready(function() {
 
 	/* step 6: FINAL QUESTIONNAIRE */
 
-	$(".step_open_questions button").live("click", function() {
+	$(".step_open_questions button").live("click", function () {
 		$(".alert").hide();
 		$(".step_open_questions").hide();
 		$(".step_7").show();
@@ -410,37 +400,37 @@ $(document).ready(function() {
 
 		server_data = create_data_log(settings, data_object, STATUS_COMPLETE);
 
-		if(DEBUG) {
-	  		console.log('Sending data to server:');
-	     	console.log(server_data);
+		if (DEBUG) {
+			console.log('Sending data to server:');
+			console.log(server_data);
 		}
 
 		// send final dataset to server
-		$.ajax ({
-	        type: "POST",
-	        url: '/',
-	        dataType: 'json',
-	        contentType: "application/json",
-	        data: JSON.stringify(server_data),
-	        success: function (result,status,xhr) {
-	        	console.log(status);
-	        	console.log(result);
-	        	if(result.status == 'ok') {
-	        		$(".alert").html('<h4>Success:</h4><p>Your data has been saved.</p>');
-	     			$(".alert").show();
-	        	} else {
-	        		$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
-	     			$(".alert").show();
-	        	}
-	        },
-	        error: function(xhr,status,error) {
-	        	console.log("Error when transmitting data!"); 
-	        	console.log(status);
-	        	console.log(error);
-	        	$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
-	     		$(".alert").show();
-	        }
-	    });
+		$.ajax({
+			type: "POST",
+			url: '/',
+			dataType: 'json',
+			contentType: "application/json",
+			data: JSON.stringify(server_data),
+			success: function (result, status, xhr) {
+				console.log(status);
+				console.log(result);
+				if (result.status == 'ok') {
+					$(".alert").html('<h4>Success:</h4><p>Your data has been saved.</p>');
+					$(".alert").show();
+				} else {
+					$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
+					$(".alert").show();
+				}
+			},
+			error: function (xhr, status, error) {
+				console.log("Error when transmitting data!");
+				console.log(status);
+				console.log(error);
+				$(".alert").html('<h3>There seems to be a problem with the log server!</h3><p>Please manually save the following data objects:</p><h4>Settings:</h4><p>' + JSON.stringify(settings) + '</p><h4>Data</h4>' + JSON.stringify(data_object) + '</p>');
+				$(".alert").show();
+			}
+		});
 	});
 
 });
